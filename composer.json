@@ -13,10 +13,8 @@
     "require-dev": {
         "ketwaroo/debug-helper": "dev-master"
     },
-    "autoload": {
-        "psr-0": {
-            "Ketwaroo": "src/"
-        }
+    "psr-4": {
+        "Ketwaroo\\": "src/Ketwaroo/"
     },
     "repositories": [
         {
