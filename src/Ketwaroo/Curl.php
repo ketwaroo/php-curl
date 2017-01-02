@@ -149,7 +149,7 @@ class Curl
      * 
      * @return Curl\Response
      */
-    protected function dispatch()
+    public function dispatch()
     {
         $conn    = $this->getConnection(false);
         $headers = [];
