@@ -161,6 +161,10 @@ class Curl
             ->setCurlinfoHeaderOut(true)
             ->configureConnection($conn);
         $body    = curl_exec($conn);
+        if (FALSE === $body)
+        {
+            throw new \Exception('Error dispatching. ' . curl_error($conn));
+        }
         return new Curl\Response($conn, $body, $headers);
     }
 
