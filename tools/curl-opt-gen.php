@@ -1806,7 +1806,7 @@ foreach ($xx as $p => $x)
         }
         $out[] = " * @return static";
         $out[] = " */";
-        $out[] = "public function set{$fnName}(\${$p}){return \$this->setOption('{$name}',\${$p},'{$p}');}";
+        $out[] = "public function set{$fnName}(\${$p}, \$type='{$p}'){return \$this->setOption('{$name}',\${$p},\$type);}";
         $out[] = "";
         
         $out[] = ' /**';

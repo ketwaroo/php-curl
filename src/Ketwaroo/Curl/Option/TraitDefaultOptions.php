@@ -3553,7 +3553,7 @@ trait TraitDefaultOptions
      */
     public function setPostfields($string)
     {
-        return $this->setOption('CURLOPT_POSTFIELDS', $string, 'string');
+        return $this->setOption('CURLOPT_POSTFIELDS', $string, 'mixed');
     }
 
     /**

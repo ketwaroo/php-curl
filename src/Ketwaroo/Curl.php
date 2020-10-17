@@ -15,8 +15,7 @@ use Ketwaroo\Curl\Option;
  *
  * @author Yaasir Ketwaroo<ketwaroo.yaasir@gmail.com>
  */
-class Curl
-{
+class Curl {
 
     /**
      *
@@ -27,27 +26,22 @@ class Curl
     protected $connected  = false;
     protected $url        = NULL;
 
-    public function __construct($url, Option $options = null)
-    {
+    public function __construct($url, Option $options = null) {
         $this->setOptions($options)
             ->setUrl($url);
     }
 
-    public function __destruct()
-    {
-        if (!empty($this->connection))
-        {
+    public function __destruct() {
+        if (!empty($this->connection)) {
             curl_close($this->connection);
         }
     }
 
-    public function getUrl(array $params = [], $separator = '&')
-    {
+    public function getUrl(array $params = [], $separator = '&') {
         return $this->url . (!empty($params) ? ((FALSE === strrpos($this->url, '?') ? '?' : '&') . http_build_query($params, null, $separator)) : '');
     }
 
-    public function setUrl($url)
-    {
+    public function setUrl($url) {
         $this->url = $url;
 
         $this->getOptions()
@@ -60,8 +54,7 @@ class Curl
      * 
      * @return Option
      */
-    public function getOptions()
-    {
+    public function getOptions() {
         return $this->options;
     }
 
@@ -70,10 +63,8 @@ class Curl
      * @param Option $options
      * @return \Ketwaroo\Curl
      */
-    public function setOptions(Option $options = NULL)
-    {
-        if (is_null($options))
-        {
+    public function setOptions(Option $options = NULL) {
+        if (is_null($options)) {
             $options = new Option();
         }
         $this->options = $options;
@@ -85,29 +76,24 @@ class Curl
      * @param Option $option
      * @return static
      */
-    public function withOptions(Option $option)
-    {
+    public function withOptions(Option $option) {
         $cu = clone $this;
         $cu->setOptions($options);
         return $cu;
     }
 
-    protected function getConnection($resetUrl = true)
-    {
-        if (empty($this->connection))
-        {
+    protected function getConnection($resetUrl = true) {
+        if (empty($this->connection)) {
             $this->connection = curl_init($this->getUrl());
             $this->connected  = true;
         }
-        if ($resetUrl)
-        {
+        if ($resetUrl) {
             $this->getOptions()->setUrl($this->getUrl());
         }
         return $this->connection;
     }
 
-    public function isConnected()
-    {
+    public function isConnected() {
         return $this->connected;
     }
 
@@ -116,15 +102,8 @@ class Curl
      * @param array $params
      * @return Curl\Response
      */
-    public function httpMethodGet(array $params = [])
-    {
-        $conn = $this->getConnection();
-
-        $opt = $this->getOptions();
-        $opt->setHttpget(TRUE)
-            ->setUrl($this->getUrl($params));
-
-        return $this->dispatch();
+    public function httpMethodGet(array $params = []) {
+        return $this->httpRequest('GET', $params);
     }
 
     /**
@@ -133,14 +112,44 @@ class Curl
      * @param array|string $body
      * @return Curl\Response
      */
-    public function httpMethodPost(array $params = [], $body = '')
-    {
+    public function httpMethodPost(array $params = [], $body = '') {
+        return $this->httpRequest('POST', $params, $body)
+    }
+
+    /**
+     * 
+     * @param array $params
+     * @param array|string $body
+     * @return Curl\Response
+     */
+    public function httpMethodPut(array $params = [], $body = '') {
+        return $this->httpRequest('PUT', $params, $body)
+    }
+
+    /**
+     * 
+     * @param array $params
+     * @param array|string $body
+     * @return Curl\Response
+     */
+    public function httpMethodDelete(array $params = [], $body = '') {
+        return $this->httpRequest('DELETE', $params, $body)
+    }
+
+    /**
+     * 
+     * @param string Method GET|PUT|POST|DELETE
+     * @param array $params
+     * @param array|string $body
+     * @return Curl\Response
+     */
+    public function httpRequest($method, array $params = [], $body = '') {
         $conn = $this->getConnection();
 
         $opt = $this->getOptions();
-        $opt->setPost(TRUE)
+        $opt->setCustomrequest($method)
             ->setUrl($this->getUrl($params))
-            ->setPostfields(is_array($body) ? http_build_query($body) : $body);
+            ->setPostfields($body);
 
         return $this->dispatch();
     }
@@ -149,8 +158,7 @@ class Curl
      * 
      * @return Curl\Response
      */
-    public function dispatch()
-    {
+    public function dispatch() {
         $conn    = $this->getConnection(false);
         $headers = [];
         $this->getOptions()
@@ -161,8 +169,7 @@ class Curl
             ->setCurlinfoHeaderOut(true)
             ->configureConnection($conn);
         $body    = curl_exec($conn);
-        if (FALSE === $body)
-        {
+        if (FALSE === $body) {
             throw new \Exception('Error dispatching. ' . curl_error($conn));
         }
         return new Curl\Response($conn, $body, $headers);
