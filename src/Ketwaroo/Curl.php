@@ -113,7 +113,7 @@ class Curl {
      * @return Curl\Response
      */
     public function httpMethodPost(array $params = [], $body = '') {
-        return $this->httpRequest('POST', $params, $body)
+        return $this->httpRequest('POST', $params, $body);
     }
 
     /**
@@ -123,7 +123,7 @@ class Curl {
      * @return Curl\Response
      */
     public function httpMethodPut(array $params = [], $body = '') {
-        return $this->httpRequest('PUT', $params, $body)
+        return $this->httpRequest('PUT', $params, $body);
     }
 
     /**
@@ -133,7 +133,7 @@ class Curl {
      * @return Curl\Response
      */
     public function httpMethodDelete(array $params = [], $body = '') {
-        return $this->httpRequest('DELETE', $params, $body)
+        return $this->httpRequest('DELETE', $params, $body);
     }
 
     /**
