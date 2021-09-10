@@ -11,7 +11,7 @@ namespace Ketwaroo\Curl;
 /**
  * Description of Option
  *
- * @author Yaasir Ketwaroo<ketwaroo.yaasir@gmail.com>
+ * @author Yaasir Ketwaroo
  */
 class Option
 {

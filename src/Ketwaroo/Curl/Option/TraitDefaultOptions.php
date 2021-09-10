@@ -11,7 +11,7 @@ namespace Ketwaroo\Curl\Option;
 /**
  * Description of TraitDefaultOptions
  *
- * @author Yaasir Ketwaroo<ketwaroo.yaasir@gmail.com>
+ * @author Yaasir Ketwaroo
  */
 trait TraitDefaultOptions
 {

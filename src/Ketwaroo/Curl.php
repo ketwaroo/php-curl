@@ -13,7 +13,7 @@ use Ketwaroo\Curl\Option;
 /**
  * Single curl connection.
  *
- * @author Yaasir Ketwaroo<ketwaroo.yaasir@gmail.com>
+ * @author Yaasir Ketwaroo
  */
 class Curl {
 
@@ -115,6 +115,17 @@ class Curl {
     public function httpMethodPost(array $params = [], $body = '') {
         return $this->httpRequest('POST', $params, $body);
     }
+    
+    /**
+     * Post but with application/json body
+     *
+     * @param mixed $jsonData
+     * @param array $params
+     * @return Curl\Response
+     */
+    public function httpMethodPostJson($jsonData, array $params = [], ) {
+        return $this->httpRequest('POST', $params, json_encode($jsonData), ['Content-Type:application/json']);
+    }
 
     /**
      * 
@@ -141,14 +152,16 @@ class Curl {
      * @param string Method GET|PUT|POST|DELETE
      * @param array $params
      * @param array|string $body
+     * @param array $requestHeaders Additional request headers
      * @return Curl\Response
      */
-    public function httpRequest($method, array $params = [], $body = '') {
+    public function httpRequest($method, array $params = [], $body = '', array $requestHeaders=[]) {
         $conn = $this->getConnection();
 
         $opt = $this->getOptions();
         $opt->setCustomrequest($method)
             ->setUrl($this->getUrl($params))
+            ->setHttpheader($requestHeaders)
             ->setPostfields($body);
 
         return $this->dispatch();

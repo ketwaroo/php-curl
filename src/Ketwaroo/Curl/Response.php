@@ -5,7 +5,7 @@ namespace Ketwaroo\Curl;
 /**
  * Description of Response
  *
- * @author Yaasir Ketwaroo<ketwaroo.yaasir@gmail.com>
+ * @author Yaasir Ketwaroo
  */
 class Response
 {
