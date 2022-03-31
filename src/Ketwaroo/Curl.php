@@ -38,7 +38,7 @@ class Curl {
     }
 
     public function getUrl(array $params = [], $separator = '&') {
-        return $this->url . (!empty($params) ? ((FALSE === strrpos($this->url, '?') ? '?' : '&') . http_build_query($params, null, $separator)) : '');
+        return $this->url . (!empty($params) ? ((FALSE === strrpos($this->url, '?') ? '?' : '&') . http_build_query($params, "", $separator)) : '');
     }
 
     public function setUrl($url) {
