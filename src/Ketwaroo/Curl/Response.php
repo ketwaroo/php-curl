@@ -30,6 +30,20 @@ class Response {
         return $this->header;
     }
 
+    public function getHeaderParsed(): array {
+        $headers = [];
+        foreach (array_filter(preg_split('~\r\n+~', $this->getHeader())) as $line) {
+            $split = explode(':', $line, 2);
+            if (count($split) === 2) {
+                $headers[trim(strtolower($split[0]))] = trim($split[1]);
+            }
+            else {
+                $headers[] = $line;
+            }
+        }
+        return $headers;
+    }
+
     public function getBody() {
         return $this->body;
     }

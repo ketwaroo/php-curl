@@ -1,11 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Ketwaroo;
 
 use Ketwaroo\Curl\Option;
@@ -22,9 +16,10 @@ class Curl {
      * @var Option
      */
     protected $options;
-    protected $connection = NULL;
-    protected $connected  = false;
-    protected $url        = NULL;
+    protected $connection  = NULL;
+    protected $connected   = false;
+    protected $url         = NULL;
+    protected $httpHeaders = [];
 
     public function __construct($url, Option $options = null) {
         $this->setOptions($options)
@@ -48,6 +43,28 @@ class Curl {
             ->setUrl($url);
 
         return $this;
+    }
+
+    public function addHttpHeader(string $field, string $value): static {
+        $this->httpHeaders[strtolower($field)] = $value;
+        return $this;
+    }
+
+    public function getHttpHeaders(): array {
+        return $this->httpHeaders;
+    }
+
+    public function setHttpHeaders(array $headers = []): static {
+        $this->httpHeaders = $headers;
+        return $this;
+    }
+
+    protected function buildHttpHeaders(array $extras = []): array {
+        $h = [];
+        foreach (array_merge($this->getHttpHeaders(), $extras) as $k => $v) {
+            $h[] = trim((is_string($k) ? $k . ':' : '') . $v);
+        }
+        return array_filter($h, strlen(...));
     }
 
     /**
@@ -115,7 +132,7 @@ class Curl {
     public function httpMethodPost(array $params = [], $body = '') {
         return $this->httpRequest('POST', $params, $body);
     }
-    
+
     /**
      * Post but with application/json body
      *
@@ -123,8 +140,8 @@ class Curl {
      * @param array $params
      * @return Curl\Response
      */
-    public function httpMethodPostJson($jsonData, array $params = [], ) {
-        return $this->httpRequest('POST', $params, json_encode($jsonData), ['Content-Type:application/json']);
+    public function httpMethodPostJson($jsonData, array $params = []) {
+        return $this->httpRequest('POST', $params, json_encode($jsonData), ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -149,19 +166,29 @@ class Curl {
 
     /**
      * 
+     * @param array $params
+     * @param array|string $body
+     * @return Curl\Response
+     */
+    public function httpDownloadFile(string $destination, array $params = [], $body = '', $method = 'GET') {
+        return file_put_contents($destination, $this->httpRequest($method, $params, $body)->getBody());
+    }
+
+    /**
+     * 
      * @param string Method GET|PUT|POST|DELETE
      * @param array $params
      * @param array|string $body
      * @param array $requestHeaders Additional request headers
      * @return Curl\Response
      */
-    public function httpRequest($method, array $params = [], $body = '', array $requestHeaders=[]) {
+    public function httpRequest($method, array $params = [], $body = '', array $requestHeaders = []) {
         $conn = $this->getConnection();
-
-        $opt = $this->getOptions();
+        $opt  = $this->getOptions();
         $opt->setCustomrequest($method)
             ->setUrl($this->getUrl($params))
-            ->setHttpheader($requestHeaders)
+            ->setHttpheader($this->buildHttpHeaders($requestHeaders))
+            ->setCurlinfoHeaderOut(true)
             ->setPostfields($body);
 
         return $this->dispatch();
